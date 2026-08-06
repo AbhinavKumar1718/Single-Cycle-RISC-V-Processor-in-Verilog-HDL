@@ -16,3 +16,5 @@ Store: SW
 Branch: BEQ, BNE, BLT, BGE, BLTU, BGEU
 Jump: JAL
 Custom halt instruction (opcode 1111111) to freeze the PC — not part of the RV32I spec, added for simulation/testbench control
+
+
