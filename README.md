@@ -1,20 +1,49 @@
-# Single-Cycle-RISC-V-Processor-in-Verilog-HDL
-32-bit Single-Cycle RISC-V Processor (RV32I) implemented in Verilog HDL.
-Single-Cycle RISC-V (RV32I) Processor — Verilog
+# 🚀 Single-Cycle RISC-V (RV32I) Processor in Verilog
 
-A single-cycle RISC-V processor implementing a core subset of the RV32I integer instruction set, built from scratch in Verilog.
+A fully synthesizable, single-cycle 32-bit RISC-V core written in Verilog HDL. This processor implements a functional subset of the **RV32I Base Integer Instruction Set** along with hardware support for custom execution control (`HALT`).
 
-Overview
+---
 
-This project implements the classic single-cycle datapath — one instruction fetched, decoded, executed, and written back every clock cycle — as a set of modular Verilog blocks connected into a top-level datapath (risc_v_datapath).
+## 📌 Architecture Overview
 
-Supported Instructions
-R-type: ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND
-I-type (ALU immediate): ADDI, SLLI, SLTI, SLTIU, XORI, SRLI, SRAI, ORI, ANDI
-Load: LW
-Store: SW
-Branch: BEQ, BNE, BLT, BGE, BLTU, BGEU
-Jump: JAL
-Custom halt instruction (opcode 1111111) to freeze the PC — not part of the RV32I spec, added for simulation/testbench control
+The core employs a single-cycle unpipelined datapath with separated instruction and data memories (Harvard Architecture model). Control signals are generated combinationally based on opcode, `funct3`, and `funct7` instruction fields.
+```text
++---------------------------------------------------------+
+|                    RISC-V TOP LEVEL                     |
+|                                                         |
+|  +-------+     +-----------+     +-------------------+  |
+|  |  PC   | --> |    IMEM   | --> | Decode & Register |  |
+|  |       |     | (Inst Mem)|     |   File (x0-x31)   |  |
+|  +-------+     +-----------+     +-------------------+  |
+|      ^                                     |            |
+|      |         +-------------+             v            |
+|      +-------- | Branch/Jump | <---- +-----------+      |
+|                |    Logic    |       | ALU Unit  |      |
+|                +-------------+       +-----------+      |
+|                                            |            |
+|                +-------------+             v            |
+|                |  Data Mem   | <-----------+            |
+|                |   (DMEM)    |                          |
+|                +-------------+                          |
++---------------------------------------------------------+
+```
 
 
+### Key Hardware Features
+* **Registers:** 32 general-purpose 32-bit registers ($x0$ is hardwired to zero).
+* **Reset Behavior:** Synchronous register file clearing and deterministic PC reset to `0x00000000`.
+* **Execution Control:** Custom hardware `HALT` mechanism to freeze PC updates upon program completion.
+* **Control Transfer:** Combinational branch ($PC + \text{offset}$) and jump target calculation.
+
+---
+
+## 📋 Supported Instruction Set Architecture (ISA)
+
+| Instruction Type | Instructions | Opcode (`inst[6:0]`) | Description |
+| :--- | :--- | :--- | :--- |
+| **R-Type** | `ADD`, `SUB`, `SLL`, `SLT`, `SLTU`, `XOR`, `SRL`, `SRA`, `OR`, `AND` | `0110011` | Register-Register ALU Operations |
+| **I-Type** | `ADDI`, `LW` | `0010011`, `0000011` | Immediate Arithmetic & Load Word |
+| **S-Type** | `SW` | `0100011` | Store Word to Memory |
+| **B-Type** | `BEQ`, `BNE`, `BLT`, `BGE`, `BLTU`, `BGEU` | `1100011` | Conditional Branching |
+| **J-Type** | `JAL` | `1101111` | Jump and Link |
+| **Custom** | `HALT` | `1111111` | Custom Opcode (`0x0000007F`) to freeze PC |
