@@ -1,10 +1,10 @@
-# 🚀 Single-Cycle RISC-V (RV32I) Processor in Verilog
+#  Single-Cycle RISC-V (RV32I) Processor in Verilog
 
 A fully synthesizable, single-cycle 32-bit RISC-V core written in Verilog HDL. This processor implements a functional subset of the **RV32I Base Integer Instruction Set** along with hardware support for custom execution control (`HALT`).
 
 ---
 
-## 📌 Architecture Overview
+##  Architecture Overview
 
 The core employs a single-cycle unpipelined datapath with separated instruction and data memories (Harvard Architecture model). Control signals are generated combinationally based on opcode, `funct3`, and `funct7` instruction fields.
 ```text
@@ -37,7 +37,7 @@ The core employs a single-cycle unpipelined datapath with separated instruction 
 
 ---
 
-## 📋 Supported Instruction Set Architecture (ISA)
+##  Supported Instruction Set Architecture (ISA)
 
 | Instruction Type | Instructions | Opcode (`inst[6:0]`) | Description |
 | :--- | :--- | :--- | :--- |
